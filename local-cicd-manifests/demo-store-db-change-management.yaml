@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-store-db-change-management
+  namespace: local-cicd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-store-db-change-management
+  template:
+    metadata:
+      labels:
+        app: demo-store-db-change-management
+    spec:
+      containers:
+        - name: demo-store-db-change-management
+          image: demo-store-db-change-management:latest  
+          ports:
+            - containerPort: 5432
+          resources:
+            limits:
+              cpu: "200m" 
+              memory: "256Mi" 
+            requests:
+              cpu: "150m" 
+              memory: "128Mi"    
+          env:
+            - name: LIQUIBASE_COMMAND_URL
+              value: "jdbc:postgresql://demo-store-db:5433/store?user=dbusername&password=dbpassword"
+            - name: LIQUIBASE_COMMAND_CHANGELOG_FILE
+              value: "changelog-master.xml"
+            - name: LIQUIBASE_LOG_LEVEL
+              value: "INFO"
+            - name: LIQUIBASE_SEARCH_PATH
+              value: "changelog/,changelog/schema/,changelog/schema/tables/,changelog/seed/,changelog/seed/data/"

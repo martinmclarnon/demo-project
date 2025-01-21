@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-marketing-frontend
+  namespace: local-cicd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-marketing-frontend
+  template:
+    metadata:
+      labels:
+        app: demo-marketing-frontend
+    spec:
+      containers:
+        - name: demo-marketing-frontend-container
+          image: demo-marketing-frontend:latest
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: "100m" 
+              memory: "128Mi" 
+            requests:
+              cpu: "50m" 
+              memory: "64Mi"  
+          env:
+            - name: VUE_APP_BASE_URL
+              value: "http://localhost:9081"

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-store-db
+  namespace: local-cicd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-store-db
+  template:
+    metadata:
+      labels:
+        app: demo-store-db
+    spec:
+      containers:
+        - name: demo-store-db-container
+          image: demo-store-db:latest
+          ports:
+            - containerPort: 5432
+          resources:
+            limits:
+              cpu: "100m" 
+              memory: "128Mi" 
+            requests:
+              cpu: "50m" 
+              memory: "64Mi"   
+          env:
+            - name: 'POSTGRES_DB'
+              value: 'store'
+            - name: 'POSTGRES_USER'
+              value: 'dbusername'
+            - name: 'POSTGRES_PASSWORD'
+              value: 'dbpassword'           
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-store-db
+  namespace: local-cicd
+spec:
+  selector:
+    app: demo-store-db
+  ports:
+    - protocol: TCP
+      port: 5433
+      targetPort: 5432

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-create-order-command
+  namespace: local-cicd
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: demo-create-order-command
+  template:
+    metadata:
+      labels:
+        app: demo-create-order-command
+    spec:
+      containers:
+        - name: demo-create-order-command-container
+          image: demo-create-order-command:latest 
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "300m" 
+              memory: "256Mi" 
+            requests:
+              cpu: "150m" 
+              memory: "128Mi"  
+          env:
+            - name: SERVER_PORT
+              value: "8080"
+            - name: SERVER_SERVLET_CONTEXTPATH
+              value: "/order-create-command-api"
+            - name: kafka_order_bootstrap-servers
+              value: "demo-kafka:9092"
+            - name: kafka_order_topic_create-order
+              value: "create-order"
+            - name: logging_level_root
+              value: "info"
+            - name: auto_create_topics_enable
+              value: "true"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-create-order-command
+  namespace: local-cicd
+spec:
+  selector:
+    app: demo-create-order-command
+  ports:
+    - protocol: TCP
+      port: 10083
+      targetPort: 8080
+  type: ClusterIP 
