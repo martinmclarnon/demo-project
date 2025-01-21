@@ -166,17 +166,7 @@ def create_order_audit_service():
                  port_forwards='10084:8080',
                  resource_deps=['demo-kafka','demo-create-order-command'],
                  trigger_mode=TRIGGER_MODE_MANUAL,
-                 labels="service")
-    
-def opentelemetry_service():
-    
-    # Apply manifest
-    k8s_yaml('./local-cicd-manifests/otel-collector-manifest.yaml')
-    
-    # Resource configuration
-    k8s_resource('otel-collector', 
-                 port_forwards=['8226:8226'],
-                 labels="otel-collector")
+                 labels="service")    
     
 # Deploy services
 zookeeper_service()
@@ -194,4 +184,3 @@ marketing_frontend_service()
 pgadmin_service()
 create_order_command_service()
 create_order_audit_service()
-opentelemetry_service()
